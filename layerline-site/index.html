@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Layerline | CAD designs for 3D printing</title>
+<meta name="description" content="Print-ready CAD designs for FDM 3D printers. STL and STEP files with tested print settings, clearances and clear licenses.">
+<meta property="og:title" content="Layerline | CAD designs for 3D printing">
+<meta property="og:description" content="Print-ready CAD designs for FDM 3D printers. STL and STEP files with tested print settings, clearances and clear licenses.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1F4FE0">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="top-in">
+<a class="brand" href="index.html" aria-label="Layerline home"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="3" rx="1" class="on"/><rect x="2" y="8" width="20" height="3" rx="1"/><rect x="2" y="13" width="20" height="3" rx="1"/><rect x="2" y="18" width="20" height="3" rx="1"/></svg><span data-site="name">Layerline</span></a>
+<nav class="nav" aria-label="Main"><a href="index.html#catalog">Designs</a><a href="index.html#how">How it works</a><a href="index.html#licenses">License</a><a href="index.html#contact">Contact</a></nav>
+</div></header>
+
+<main class="wrap" id="main">
+<div class="hero">
+  <div>
+    <p class="label" data-site="tagline">CAD designs for FDM 3D printing</p>
+    <h1 style="margin-top:14px">Models built to print <em>right the first time.</em></h1>
+    <p class="lead">Functional parts, enclosures and home upgrades, drawn with real clearances and listed with the exact print settings.</p>
+    <div class="cta-row"><a class="btn accent" href="#catalog">Browse designs</a><a class="btn ghost" href="#licenses">Read the license</a></div>
+    <ul class="facts">
+      <li><span class="mono">STL</span><span>For your slicer, ready to load</span></li>
+      <li><span class="mono">STEP</span><span>For your CAD, so you can change any dimension</span></li>
+      <li><span class="mono">0.20</span><span>Layer height, nozzle and infill shown on every listing</span></li>
+    </ul>
+  </div>
+  <div class="hero-art" id="hero-art" role="img" aria-label="Diagram of a vase sliced into 0.20 millimetre layers"></div>
+</div>
+
+<section id="catalog">
+  <div class="sec-head"><h2>Designs</h2><span class="label" id="result-count"></span></div>
+  <div class="tools">
+    <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+    <div class="right">
+      <input class="field" id="q" type="search" placeholder="Search designs" autocomplete="off" aria-label="Search designs">
+      <select class="field" id="sort" aria-label="Sort designs">
+        <option value="featured">Featured</option><option value="price-asc">Price, low to high</option><option value="price-desc">Price, high to low</option><option value="time-asc">Shortest print</option>
+      </select>
+    </div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden></p>
+</section>
+
+<section class="block" id="how">
+  <div class="two">
+    <div><h2 class="h2">From checkout to first layer</h2><p class="note">Every file is a one-time download. No account needed.</p></div>
+    <ol class="steps">
+      <li><div><strong>Pick a design</strong><span>Each listing shows the print time, filament use and the settings it was drawn for.</span></div></li>
+      <li><div><strong>Pay securely</strong><span>The Buy button opens a hosted payment page. Card and UPI details never touch this site.</span></div></li>
+      <li><div><strong>Download your files</strong><span>You get the STL for slicing and, where listed, the STEP file for editing.</span></div></li>
+      <li><div><strong>Slice and print</strong><span>Load the STL, apply the listed settings and print. Questions go to the email below.</span></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="block" id="licenses">
+  <div class="two">
+    <div><h2 class="h2">What the license covers</h2><p class="note">Every purchase includes the personal license. Commercial use is available on request. <a href="terms.html" style="color:var(--accent)">Full terms</a>.</p></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>You can</th><th>Personal</th><th>Commercial</th></tr></thead>
+      <tbody>
+        <tr><td>Print for yourself</td><td class="y">Yes</td><td class="y">Yes</td></tr>
+        <tr><td>Give printed copies as gifts</td><td class="y">Yes</td><td class="y">Yes</td></tr>
+        <tr><td>Sell printed copies</td><td class="n">No</td><td class="y">Yes</td></tr>
+        <tr><td>Edit the STEP file for your own use</td><td class="y">Yes</td><td class="y">Yes</td></tr>
+        <tr><td>Share or resell the files</td><td class="n">No</td><td class="n">No</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="block" id="faq">
+  <div class="two">
+    <h2 class="h2">Before you print</h2>
+    <div class="faq">
+      <details open><summary>Which files do I get?</summary><p>Each design includes an STL for slicing and, where listed, a STEP file for editing in your own CAD software. The listing shows which formats that design ships with.</p></details>
+      <details><summary>Which printers will it work on?</summary><p>Any FDM printer with a build plate large enough for the part. Each listing gives the layer height, nozzle size, material and support settings the design was drawn for.</p></details>
+      <details><summary>Parts fit too tight or too loose. What do I do?</summary><p>Clearances are set for a 0.4 mm nozzle at 0.20 mm layers. If your printer runs tight, scale the moving part by 101 to 102 percent in your slicer, or change the clearance in the STEP file.</p></details>
+      <details><summary>Can I print in a different material?</summary><p>Yes. The listed material is the one the design was drawn for. Stiffer or more flexible filaments change how snap fits and hinges behave, so test a small section first.</p></details>
+      <details><summary>Can I get a refund?</summary><p>Digital files cannot be returned, but a file that does not open or does not match its listing is fixed or refunded. See the <a href="refunds.html" style="color:var(--accent)">refund policy</a>.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="contact">
+  <div class="two">
+    <div><h2 class="h2">Ask before you buy</h2><p class="note">Need a custom size, a commercial license or help with a print? Write to us.</p></div>
+    <div class="contact">
+      <span class="label">Email</span>
+      <a class="big" data-mail="text" href="mailto:layerline@yahoo.com">layerline@yahoo.com</a>
+      <div class="links"><a data-social="instagram" href="#" hidden target="_blank" rel="noopener">Instagram</a><a data-social="youtube" href="#" hidden target="_blank" rel="noopener">YouTube</a></div>
+      <p class="fine">We reply within two working days.</p>
+    </div>
+  </div>
+</section>
+</main>
+<footer>
+<span>&copy; <span id="yr">2026</span> <span data-site="name">Layerline</span>. Digital CAD files for 3D printing.</span>
+<nav aria-label="Legal"><a href="terms.html">License and terms</a><a href="privacy.html">Privacy</a><a href="refunds.html">Refunds</a></nav>
+</footer>
+<script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+<script src="store.js"></script>
+<script src="site.js"></script>
+</body>
+</html>
