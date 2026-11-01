@@ -5,7 +5,7 @@
   var PRODUCTS = STORE.products || [];
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
-  var fmt = new Intl.NumberFormat(SITE.locale || "en-IN", { style: "currency", currency: SITE.currency || "INR", maximumFractionDigits: 0 });
+  var fmt = new Intl.NumberFormat(SITE.locale || "en-US", { style: "currency", currency: SITE.currency || "USD", minimumFractionDigits: 0, maximumFractionDigits: 2 });
   var money = function (n) { return fmt.format(Number(n) || 0); };
   function fmtTime(m) {
     m = Number(m) || 0; if (!m) return "";
@@ -129,7 +129,7 @@
         '<dl class="spec">' + rows.map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") + '</dl></div>';
 
       var ld = { "@context": "https://schema.org", "@type": "Product", name: p.name, description: p.blurb || p.name, category: p.cat,
-        offers: { "@type": "Offer", price: String(p.price), priceCurrency: SITE.currency || "INR", availability: "https://schema.org/InStock" } };
+        offers: { "@type": "Offer", price: String(p.price), priceCurrency: SITE.currency || "USD", availability: "https://schema.org/InStock" } };
       var sc = document.createElement("script"); sc.type = "application/ld+json"; sc.textContent = JSON.stringify(ld); document.head.appendChild(sc);
 
       var rel = PRODUCTS.filter(function (x) { return x.id !== p.id; }).sort(function (a, b) { return (b.cat === p.cat) - (a.cat === p.cat); }).slice(0, 3);

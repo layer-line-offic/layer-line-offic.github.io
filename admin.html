@@ -67,7 +67,7 @@
         <label class="fld full" for="f-name">Name<input id="f-name" maxlength="80" autocomplete="off"></label>
         <label class="fld" for="f-cat">Category<input id="f-cat" list="cats" maxlength="30" autocomplete="off"></label>
         <datalist id="cats"></datalist>
-        <label class="fld" for="f-price">Price<input id="f-price" type="number" min="0" step="1" inputmode="numeric"></label>
+        <label class="fld" for="f-price">Price (USD)<input id="f-price" type="number" min="0" step="0.01" inputmode="decimal"></label>
         <label class="fld full" for="f-blurb">Description<textarea id="f-blurb" rows="3" maxlength="400"></textarea></label>
         <label class="fld full" for="f-buyUrl">Payment link (optional)<input id="f-buyUrl" type="url" placeholder="https://..." maxlength="400"></label>
         <label class="fld" for="f-formats">Files included<input id="f-formats" maxlength="40"></label>
@@ -158,7 +158,7 @@
     if (!v.name) { err.textContent = "Enter a name for the design."; err.hidden = false; return; }
     if (v.price === "" || isNaN(Number(v.price)) || Number(v.price) < 0) { err.textContent = "Enter a price of 0 or more."; err.hidden = false; return; }
     if (v.buyUrl && !/^https?:\/\//i.test(v.buyUrl)) { err.textContent = "The payment link must start with https://"; err.hidden = false; return; }
-    var item = { id: editing == null ? slug(v.name) : data.products[editing].id, name: v.name, cat: v.cat || "General", price: Math.round(Number(v.price)), art: v.art, image: v.image, buyUrl: v.buyUrl,
+    var item = { id: editing == null ? slug(v.name) : data.products[editing].id, name: v.name, cat: v.cat || "General", price: Math.round(Number(v.price) * 100) / 100, art: v.art, image: v.image, buyUrl: v.buyUrl,
       blurb: v.blurb, formats: v.formats, mins: Math.max(0, Math.round(Number(v.mins) || 0)), grams: Math.max(0, Math.round(Number(v.grams) || 0)), layer: v.layer, nozzle: v.nozzle, supports: v.supports, infill: v.infill, material: v.material, fit: v.fit };
     if (editing == null) data.products.unshift(item); else data.products[editing] = item;
     closeForm(); persist(); renderRows();
