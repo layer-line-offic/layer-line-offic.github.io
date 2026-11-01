@@ -5,7 +5,7 @@
 
   buyUrl:  the payment link for that design (Razorpay, Gumroad, Lemon Squeezy, Stripe and similar).
            Leave it empty and the Buy button opens an email to you instead.
-  image:   optional file name of a photo you put in the images folder, for example "gear-set.jpg".
+  image:   optional file name of a photo you upload next to index.html, for example "gear-set.jpg".
            Leave it empty to show the line drawing chosen in "art".
 */
 window.STORE = {

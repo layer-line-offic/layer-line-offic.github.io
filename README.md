@@ -12,8 +12,8 @@ A complete static store for your CAD designs. No build step, no server, no datab
 | `404.html` | Page shown for unknown addresses |
 | `store.js` | **Your store data.** Name, email and every design live here |
 | `admin.html` | Your private editor. Opens on your computer and writes a new `store.js` |
-| `assets/` | Styles and scripts |
-| `images/` | Put design photos here, then enter the file name in the editor |
+| `styles.css`, `site.js` | Look and behavior of the site |
+| photos | Put design photos (for example `gear-set.jpg`) next to `index.html`, then enter the file name in the editor |
 | `robots.txt`, `sitemap.xml` | Search engine files |
 
 ## Before you publish
@@ -34,7 +34,7 @@ Host the site at the root of a domain (`www.yourdomain.com`). The 404 page uses 
 
 1. Open `admin.html` from your computer.
 2. Add, edit, reorder or remove designs.
-3. Choose **Download store.js** and upload it over the old one. Add any new photos to `images/`.
+3. Choose **Download store.js** and upload it over the old one. Upload any new photos next to it.
 
 `admin.html` cannot change the live site by itself, so it is safe if you upload it, but you do not need to. Search engines are told to skip it.
 

@@ -7,7 +7,7 @@
 <title>Layerline store manager</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="styles.css">
 <style>
   .adm { padding-block: 32px 96px; display: grid; gap: 28px; }
   .adm h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; }
@@ -101,7 +101,7 @@
 </div></div>
 
 <script src="store.js"></script>
-<script src="assets/site.js"></script>
+<script src="site.js"></script>
 <script>
 (function () {
   var L = window.Layerline, esc = L.esc, $ = function (id) { return document.getElementById(id); };
@@ -123,7 +123,7 @@
   function renderRows() {
     $("count").textContent = data.products.length + " listed";
     $("rows").innerHTML = data.products.length ? data.products.map(function (p, i) {
-      var th = p.image ? '<img class="photo" src="images/' + esc(p.image) + '" alt="">' : L.artSvg(p.art);
+      var th = p.image ? '<img class="photo" src="' + esc(p.image) + '" alt="">' : L.artSvg(p.art);
       return '<div class="row"><div class="th">' + th + '</div><div><div class="nm">' + esc(p.name) + '</div><div class="meta">' + esc(p.cat) + ' &middot; ' + L.money(p.price) + (p.buyUrl ? ' &middot; payment link set' : ' &middot; no payment link') + '</div></div>' +
         '<div class="acts"><button class="btn ghost small" type="button" data-up="' + i + '"' + (i === 0 ? " disabled" : "") + ' aria-label="Move up">Up</button><button class="btn ghost small" type="button" data-edit="' + i + '">Edit</button><button class="btn danger small" type="button" data-del="' + i + '">Remove</button></div></div>';
     }).join("") : '<p class="empty">No designs yet. Choose Add a design.</p>';
