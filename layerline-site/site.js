@@ -41,10 +41,21 @@
   };
   function artSvg(key) { var f = art[key] || art.organizer; return '<svg class="art" viewBox="0 0 200 150" aria-hidden="true">' + f() + '</svg>'; }
   function visual(p) { return p.image ? '<img class="photo" src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy">' : artSvg(p.art); }
-  function buyLink(p, cls) {
-    if (p.buyUrl) return '<a class="btn ' + (cls || "accent") + '" href="' + esc(p.buyUrl) + '" target="_blank" rel="noopener">Buy now</a>';
-    var subject = encodeURIComponent("Order: " + p.name), body = encodeURIComponent("Hi, I would like to buy " + p.name + " (" + money(p.price) + ").");
-    return '<a class="btn ' + (cls || "accent") + '" href="mailto:' + esc(SITE.email || "") + '?subject=' + subject + '&body=' + body + '">Buy by email</a>';
+  var TIER_COPY = {
+    personal: ["Print it for yourself", "Give printed copies as gifts", "Modify the STL for your own use"],
+    commercial: ["Everything in Personal", "Sell the prints you make", "Online or in person"]
+  };
+  function tiers(p) {
+    var t = [{ key: "personal", label: "Personal", price: p.personalPrice, url: p.personalUrl }];
+    if (p.commercialPrice !== undefined && p.commercialPrice !== null && p.commercialPrice !== "") t.push({ key: "commercial", label: "Commercial", price: p.commercialPrice, url: p.commercialUrl });
+    return t;
+  }
+  function fromPrice(p) { return Math.min.apply(null, tiers(p).map(function (t) { return Number(t.price) || 0; })); }
+  function priceTag(p) { return (tiers(p).length > 1 ? '<span class="from">From</span>' : "") + money(fromPrice(p)); }
+  function buyLink(p, t) {
+    if (t.url) return '<a class="btn accent" href="' + esc(t.url) + '" target="_blank" rel="noopener">Buy ' + esc(t.label) + '</a>';
+    var subject = encodeURIComponent("Order: " + p.name + " (" + t.label + " license)"), body = encodeURIComponent("Hi, I would like to buy " + p.name + " with the " + t.label + " license (" + money(t.price) + ").");
+    return '<a class="btn accent" href="mailto:' + esc(SITE.email || "") + '?subject=' + subject + '&body=' + body + '">Buy ' + esc(t.label) + ' by email</a>';
   }
 
   window.Layerline = { STORE: STORE, esc: esc, money: money, fmtTime: fmtTime, artSvg: artSvg, art: art };
@@ -86,16 +97,16 @@
     var render = function () {
       var q = state.q.trim().toLowerCase();
       var list = PRODUCTS.filter(function (p) { return (state.cat === "All" || p.cat === state.cat) && (!q || (p.name + " " + p.cat + " " + (p.blurb || "")).toLowerCase().indexOf(q) !== -1); });
-      if (state.sort === "price-asc") list.sort(function (a, b) { return a.price - b.price; });
-      if (state.sort === "price-desc") list.sort(function (a, b) { return b.price - a.price; });
+      if (state.sort === "price-asc") list.sort(function (a, b) { return fromPrice(a) - fromPrice(b); });
+      if (state.sort === "price-desc") list.sort(function (a, b) { return fromPrice(b) - fromPrice(a); });
       if (state.sort === "time-asc") list.sort(function (a, b) { return (a.mins || 1e9) - (b.mins || 1e9); });
       grid.innerHTML = list.map(function (p) {
         var url = "product.html?id=" + encodeURIComponent(p.id);
-        var specs = [p.formats, fmtTime(p.mins), p.grams ? p.grams + " g" : ""].filter(Boolean).map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("");
+        var specs = ["STL", fmtTime(p.mins), p.grams ? p.grams + " g" : ""].filter(Boolean).map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("");
         return '<article class="card"><a class="art-wrap' + (p.image ? " photo-wrap" : "") + '" href="' + url + '" aria-label="View ' + esc(p.name) + '">' + visual(p) + '</a>' +
           '<div class="card-body"><span class="label cat">' + esc(p.cat) + '</span><h3><a href="' + url + '">' + esc(p.name) + '</a></h3>' +
           '<div class="specs">' + specs + '</div>' +
-          '<div class="card-foot"><span class="price">' + money(p.price) + '</span><a class="btn ghost small" href="' + url + '">View details</a></div></div></article>';
+          '<div class="card-foot"><span class="price">' + priceTag(p) + '</span><a class="btn ghost small" href="' + url + '">View details</a></div></div></article>';
       }).join("");
       emptyEl.hidden = list.length !== 0;
       emptyEl.textContent = PRODUCTS.length ? "No designs match that search. Try another category or clear the search." : "New designs are on the way. Check back soon.";
@@ -119,17 +130,19 @@
       document.title = p.name + " | " + (SITE.name || "Layerline");
       var meta = document.querySelector('meta[name="description"]');
       if (meta) meta.setAttribute("content", (p.blurb || p.name).slice(0, 155));
-      var rows = [["Files", p.formats], ["Print time", fmtTime(p.mins)], ["Filament", p.grams ? p.grams + " g" : ""], ["Layer height", p.layer], ["Nozzle", p.nozzle], ["Supports", p.supports], ["Infill", p.infill], ["Material", p.material], ["Fit", p.fit]].filter(function (r) { return r[1]; });
+      var rows = [["File", "STL, ready to slice"], ["Print time", fmtTime(p.mins)], ["Filament", p.grams ? p.grams + " g" : ""], ["Layer height", p.layer], ["Nozzle", p.nozzle], ["Supports", p.supports], ["Infill", p.infill], ["Material", p.material], ["Fit", p.fit]].filter(function (r) { return r[1]; });
       $("crumb-name").textContent = p.name;
       pd.innerHTML = '<div class="pd-art' + (p.image ? " photo-wrap" : "") + '">' + visual(p) + '</div>' +
         '<div class="pd-info"><div style="display:grid;gap:10px"><span class="label cat">' + esc(p.cat) + '</span><h1>' + esc(p.name) + '</h1></div>' +
         '<p class="desc">' + esc(p.blurb || "") + '</p>' +
-        '<div class="pd-buy"><span class="price">' + money(p.price) + '</span>' + buyLink(p) + '</div>' +
-        '<p class="fine">Instant digital files. Personal license included. <a href="terms.html" style="color:var(--accent)">Read the license</a>.</p>' +
+        '<div class="tiers" role="group" aria-label="Choose a license">' + tiers(p).map(function (t) {
+          return '<div class="tier"><span class="label">' + t.label + ' license</span><span class="price">' + money(t.price) + '</span><ul>' + TIER_COPY[t.key].map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul>' + buyLink(p, t) + '</div>';
+        }).join("") + '</div>' +
+        '<p class="fine">Instant digital download. One STL file. <a href="terms.html" style="color:var(--accent)">Read the license terms</a>.</p>' +
         '<dl class="spec">' + rows.map(function (r) { return "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") + '</dl></div>';
 
       var ld = { "@context": "https://schema.org", "@type": "Product", name: p.name, description: p.blurb || p.name, category: p.cat,
-        offers: { "@type": "Offer", price: String(p.price), priceCurrency: SITE.currency || "USD", availability: "https://schema.org/InStock" } };
+        offers: tiers(p).map(function (t) { return { "@type": "Offer", name: t.label + " license", price: String(t.price), priceCurrency: SITE.currency || "USD", availability: "https://schema.org/InStock" }; }) };
       var sc = document.createElement("script"); sc.type = "application/ld+json"; sc.textContent = JSON.stringify(ld); document.head.appendChild(sc);
 
       var rel = PRODUCTS.filter(function (x) { return x.id !== p.id; }).sort(function (a, b) { return (b.cat === p.cat) - (a.cat === p.cat); }).slice(0, 3);
@@ -137,7 +150,7 @@
       if (relEl && rel.length) {
         relEl.innerHTML = rel.map(function (x) {
           var url = "product.html?id=" + encodeURIComponent(x.id);
-          return '<article class="card"><a class="art-wrap' + (x.image ? " photo-wrap" : "") + '" href="' + url + '" aria-label="View ' + esc(x.name) + '">' + visual(x) + '</a><div class="card-body"><span class="label cat">' + esc(x.cat) + '</span><h3><a href="' + url + '">' + esc(x.name) + '</a></h3><div class="card-foot"><span class="price">' + money(x.price) + '</span></div></div></article>';
+          return '<article class="card"><a class="art-wrap' + (x.image ? " photo-wrap" : "") + '" href="' + url + '" aria-label="View ' + esc(x.name) + '">' + visual(x) + '</a><div class="card-body"><span class="label cat">' + esc(x.cat) + '</span><h3><a href="' + url + '">' + esc(x.name) + '</a></h3><div class="card-foot"><span class="price">' + priceTag(x) + '</span></div></div></article>';
         }).join("");
         $("related-wrap").hidden = false;
       }

@@ -4,15 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Layerline store manager</title>
+<title>Owner login | Layerline</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="styles.css">
 <style>
-  .adm { padding-block: 32px 96px; display: grid; gap: 28px; }
+  .adm { padding-block: 32px 120px; display: grid; gap: 24px; }
   .adm h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; }
   .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 16px; }
   .panel h2 { font-size: 22px; font-weight: 700; }
+  .login { max-width: 560px; }
   .info { background: var(--tint); border-radius: 8px; padding: 12px 14px; font-size: 14px; }
   .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .fields .full { grid-column: 1 / -1; }
@@ -22,82 +24,109 @@
   .rows { display: grid; gap: 10px; }
   .row { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: 14px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--bg); }
   .row .th { background: var(--tint); border-radius: 6px; padding: 2px; overflow: hidden; }
+  .row .th .photo { aspect-ratio: 4 / 3; border-radius: 4px; }
   .row .nm { font-weight: 600; overflow-wrap: anywhere; }
   .row .meta { color: var(--muted); font-size: 13px; font-family: var(--font-mono); }
   .row .acts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
   .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--ink); color: var(--bg); padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
   .bar .in { max-width: 1120px; margin-inline: auto; display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
   .bar p { margin-right: auto; font-size: 14px; min-width: 0; }
+  .bar .btn.ghost { color: var(--bg); border-color: var(--muted); }
   .err { color: var(--danger); font-size: 14px; }
+  .ok { color: var(--accent); font-size: 14px; }
+  .photo-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .photo-row img { width: 96px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+  .topline { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   @media (max-width: 560px) { .fields { grid-template-columns: minmax(0, 1fr); } .row { grid-template-columns: 56px minmax(0, 1fr); } .row .acts { grid-column: 1 / -1; justify-content: flex-start; } }
 </style>
 </head>
 <body>
 <main class="wrap adm" id="main">
-  <div>
-    <p class="label">Owner tool, not for visitors</p>
-    <h1 style="margin-top:10px">Store manager</h1>
+  <div class="topline">
+    <div><p class="label">Owner area</p><h1 style="margin-top:10px">Owner login</h1></div>
+    <a class="btn ghost small" href="index.html">Back to the store</a>
   </div>
-  <p class="info">This page runs only in your browser and cannot change the live site by itself. Add, edit or remove designs, choose <strong>Download store.js</strong>, then replace the store.js file on your host with the downloaded one. You can keep this page on your computer and not upload it. If you do upload it, it stays harmless because it cannot publish anything.</p>
 
-  <section class="panel" aria-labelledby="h-site">
-    <h2 id="h-site">Store details</h2>
-    <div class="fields">
-      <label class="fld" for="s-name">Store name<input id="s-name" maxlength="40"></label>
-      <label class="fld" for="s-tagline">Tagline<input id="s-tagline" maxlength="80"></label>
-      <label class="fld" for="s-email">Contact email<input id="s-email" type="email" maxlength="80"></label>
-      <label class="fld" for="s-domain">Website address<input id="s-domain" placeholder="https://www.yourdomain.com" maxlength="120"></label>
-      <label class="fld" for="s-instagram">Instagram link (optional)<input id="s-instagram" maxlength="160"></label>
-      <label class="fld" for="s-youtube">YouTube link (optional)<input id="s-youtube" maxlength="160"></label>
-    </div>
-  </section>
-
-  <section class="panel" aria-labelledby="h-list">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <h2 id="h-list">Designs <span class="label" id="count"></span></h2>
-      <button class="btn accent small" id="add" type="button">Add a design</button>
-    </div>
-    <div class="rows" id="rows"></div>
-  </section>
-
-  <section class="panel" id="form-panel" hidden aria-labelledby="h-form">
-    <h2 id="h-form">Add a design</h2>
-    <form id="form" novalidate>
+  <!-- Signed out -->
+  <section class="panel login" id="login" aria-labelledby="h-login">
+    <h2 id="h-login">Sign in with your GitHub token</h2>
+    <p class="info">Only the owner of the GitHub repository can change listings. Customers never log in. They buy through the payment page and get their STL by email. Paste your GitHub access token below. It stays in this browser tab only and is sent only to GitHub.</p>
+    <form id="login-form" novalidate>
       <div class="fields">
-        <label class="fld full" for="f-name">Name<input id="f-name" maxlength="80" autocomplete="off"></label>
-        <label class="fld" for="f-cat">Category<input id="f-cat" list="cats" maxlength="30" autocomplete="off"></label>
-        <datalist id="cats"></datalist>
-        <label class="fld" for="f-price">Price (USD)<input id="f-price" type="number" min="0" step="0.01" inputmode="decimal"></label>
-        <label class="fld full" for="f-blurb">Description<textarea id="f-blurb" rows="3" maxlength="400"></textarea></label>
-        <label class="fld full" for="f-buyUrl">Payment link (optional)<input id="f-buyUrl" type="url" placeholder="https://..." maxlength="400"></label>
-        <label class="fld" for="f-formats">Files included<input id="f-formats" maxlength="40"></label>
-        <label class="fld" for="f-mins">Print time (minutes)<input id="f-mins" type="number" min="0" step="1" inputmode="numeric"></label>
-        <label class="fld" for="f-grams">Filament (grams)<input id="f-grams" type="number" min="0" step="1" inputmode="numeric"></label>
-        <label class="fld" for="f-layer">Layer height<input id="f-layer" maxlength="30"></label>
-        <label class="fld" for="f-nozzle">Nozzle<input id="f-nozzle" maxlength="30"></label>
-        <label class="fld" for="f-supports">Supports<input id="f-supports" maxlength="40"></label>
-        <label class="fld" for="f-infill">Infill<input id="f-infill" maxlength="40"></label>
-        <label class="fld" for="f-material">Material<input id="f-material" maxlength="40"></label>
-        <label class="fld full" for="f-fit">Fit or hardware notes<input id="f-fit" maxlength="80"></label>
-        <label class="fld" for="f-image">Photo file name (optional)<input id="f-image" placeholder="gear-set.jpg" maxlength="80"></label>
-        <label class="fld" for="f-art">Drawing when there is no photo
-          <select id="f-art"><option value="organizer">Drawer tray</option><option value="case">Enclosure</option><option value="gear">Gear</option><option value="hook">Hook</option><option value="vase">Vase</option><option value="spool">Spool</option></select>
-        </label>
+        <label class="fld full" for="l-repo">Repository<input id="l-repo" autocomplete="off" placeholder="your-username/your-username.github.io"></label>
+        <label class="fld" for="l-branch">Branch<input id="l-branch" autocomplete="off" placeholder="main"></label>
+        <label class="fld full" for="l-token">GitHub access token<input id="l-token" type="password" autocomplete="off" placeholder="github_pat_..."></label>
       </div>
-      <p class="fine" style="margin-top:10px">Put photo files in the images folder of your site before you upload.</p>
-      <p class="err" id="err" role="alert" hidden></p>
-      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap">
-        <button class="btn ghost" id="cancel" type="button">Cancel</button>
-        <button class="btn accent" type="submit">Done</button>
-      </div>
+      <p class="err" id="l-err" role="alert" hidden></p>
+      <div style="margin-top:14px"><button class="btn accent" id="l-go" type="submit">Sign in</button></div>
     </form>
+    <p class="fine">No token yet? In GitHub open Settings, Developer settings, Personal access tokens, Fine-grained tokens, then Generate new token. Choose this repository only, and give it Contents: Read and write. README.md has the full steps.</p>
   </section>
+
+  <!-- Signed in -->
+  <div id="app" hidden>
+    <section class="panel" aria-labelledby="h-site" style="margin-bottom:24px">
+      <h2 id="h-site">Store details</h2>
+      <div class="fields">
+        <label class="fld" for="s-name">Store name<input id="s-name" maxlength="40"></label>
+        <label class="fld" for="s-tagline">Tagline<input id="s-tagline" maxlength="80"></label>
+        <label class="fld" for="s-email">Contact email<input id="s-email" type="email" maxlength="80"></label>
+        <label class="fld" for="s-domain">Website address<input id="s-domain" maxlength="120"></label>
+        <label class="fld" for="s-instagram">Instagram link (optional)<input id="s-instagram" maxlength="160"></label>
+        <label class="fld" for="s-youtube">YouTube link (optional)<input id="s-youtube" maxlength="160"></label>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="h-list" style="margin-bottom:24px">
+      <div class="topline">
+        <h2 id="h-list">Designs <span class="label" id="count"></span></h2>
+        <button class="btn accent small" id="add" type="button">Add a design</button>
+      </div>
+      <div class="rows" id="rows"></div>
+    </section>
+
+    <section class="panel" id="form-panel" hidden aria-labelledby="h-form">
+      <h2 id="h-form">Add a design</h2>
+      <form id="form" novalidate>
+        <div class="fields">
+          <label class="fld full" for="f-name">Name<input id="f-name" maxlength="80" autocomplete="off"></label>
+          <label class="fld" for="f-cat">Category<input id="f-cat" list="cats" maxlength="30" autocomplete="off"></label>
+          <datalist id="cats"></datalist>
+          <label class="fld" for="f-art">Drawing when there is no photo
+            <select id="f-art"><option value="organizer">Drawer tray</option><option value="case">Enclosure</option><option value="gear">Gear</option><option value="hook">Hook</option><option value="vase">Vase</option><option value="spool">Spool</option></select>
+          </label>
+          <label class="fld full" for="f-blurb">Description<textarea id="f-blurb" rows="3" maxlength="400"></textarea></label>
+          <label class="fld" for="f-personalPrice">Personal price (USD)<input id="f-personalPrice" type="number" min="0" step="0.01" inputmode="decimal"></label>
+          <label class="fld" for="f-commercialPrice">Commercial price (USD)<input id="f-commercialPrice" type="number" min="0" step="0.01" inputmode="decimal"></label>
+          <label class="fld" for="f-personalUrl">Personal payment link<input id="f-personalUrl" type="url" placeholder="https://..." maxlength="400"></label>
+          <label class="fld" for="f-commercialUrl">Commercial payment link<input id="f-commercialUrl" type="url" placeholder="https://..." maxlength="400"></label>
+          <label class="fld" for="f-mins">Print time (minutes)<input id="f-mins" type="number" min="0" step="1" inputmode="numeric"></label>
+          <label class="fld" for="f-grams">Filament (grams)<input id="f-grams" type="number" min="0" step="1" inputmode="numeric"></label>
+          <label class="fld" for="f-layer">Layer height<input id="f-layer" maxlength="30"></label>
+          <label class="fld" for="f-nozzle">Nozzle<input id="f-nozzle" maxlength="30"></label>
+          <label class="fld" for="f-supports">Supports<input id="f-supports" maxlength="40"></label>
+          <label class="fld" for="f-infill">Infill<input id="f-infill" maxlength="40"></label>
+          <label class="fld" for="f-material">Material<input id="f-material" maxlength="40"></label>
+          <label class="fld" for="f-fit">Fit or hardware notes<input id="f-fit" maxlength="80"></label>
+          <div class="fld full">
+            <label for="f-photo">Photo (optional)</label>
+            <div class="photo-row"><input id="f-photo" type="file" accept="image/*"><span id="f-preview"></span><button class="btn ghost small" id="f-photo-rm" type="button" hidden>Remove photo</button></div>
+          </div>
+        </div>
+        <p class="err" id="err" role="alert" hidden></p>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap">
+          <button class="btn ghost" id="cancel" type="button">Cancel</button>
+          <button class="btn accent" type="submit">Done</button>
+        </div>
+      </form>
+    </section>
+  </div>
 </main>
 
-<div class="bar"><div class="in">
-  <p id="msg">Nothing changed yet.</p>
-  <button class="btn ghost small" id="reset" type="button" style="color:var(--bg);border-color:var(--muted)">Reset to saved</button>
-  <button class="btn accent small" id="download" type="button">Download store.js</button>
+<div class="bar" id="bar" hidden><div class="in">
+  <p id="msg" role="status">Signed in. No changes yet.</p>
+  <button class="btn ghost small" id="signout" type="button">Sign out</button>
+  <button class="btn accent small" id="publish" type="button" disabled>Publish changes</button>
 </div></div>
 
 <script src="store.js"></script>
@@ -105,75 +134,184 @@
 <script>
 (function () {
   var L = window.Layerline, esc = L.esc, $ = function (id) { return document.getElementById(id); };
-  var original = JSON.stringify(window.STORE);
-  var DRAFT = "layerline-admin-draft";
-  var data = JSON.parse(original);
-  try { var d = JSON.parse(localStorage.getItem(DRAFT) || "null"); if (d && d.products && d.site) data = d; } catch (e) {}
-  var editing = null;
+  var SITE = (window.STORE && window.STORE.site) || {};
+  var HEADER = "/*\n  Layerline store data. This is the one file that holds your listings.\n  Change it by signing in at admin.html (Owner login), which saves straight to GitHub.\n\n  Each design is an STL file sold with two licenses:\n  personalPrice / personalUrl:      the Personal license price and its payment link\n  commercialPrice / commercialUrl:  the Commercial license price and its payment link\n  A payment link is the checkout link from Lemon Squeezy. Leave it empty and the Buy button opens an email to you instead.\n  image: optional photo file name uploaded next to index.html. Empty shows the line drawing chosen in \"art\".\n*/\n";
+  var API = "https://api.github.com";
+  var S = { repo: "", branch: "main", token: "", data: null, original: "", sha: "", editing: null, draftImg: null, draftPreview: null, pending: {}, previews: {}, busy: false };
   var siteKeys = ["name", "tagline", "email", "domain", "instagram", "youtube"];
-  var keys = ["name", "cat", "price", "blurb", "buyUrl", "formats", "mins", "grams", "layer", "nozzle", "supports", "infill", "material", "fit", "image", "art"];
+  var keys = ["name", "cat", "art", "blurb", "personalPrice", "commercialPrice", "personalUrl", "commercialUrl", "mins", "grams", "layer", "nozzle", "supports", "infill", "material", "fit"];
 
-  function changed() { return JSON.stringify(data) !== original; }
-  function persist() { try { localStorage.setItem(DRAFT, JSON.stringify(data)); } catch (e) {} $("msg").textContent = changed() ? "You have changes. Download store.js and replace the file on your host." : "Nothing changed yet."; }
+  /* GitHub API helpers */
+  function gh(path, opts) {
+    opts = opts || {};
+    return fetch(API + path, { method: opts.method || "GET", headers: Object.assign({ "Accept": "application/vnd.github+json", "Authorization": "Bearer " + S.token, "X-GitHub-Api-Version": "2022-11-28" }, opts.body ? { "Content-Type": "application/json" } : {}), body: opts.body ? JSON.stringify(opts.body) : undefined })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var e = new Error(j.message || ("GitHub error " + r.status)); e.status = r.status; throw e; } return j; }); });
+  }
+  function explain(e) {
+    if (e && e.status === 401) return "GitHub did not accept that token. Check that you copied all of it and that it has not expired.";
+    if (e && e.status === 403) return "GitHub refused the request. Check the token's permissions, or wait a minute and try again.";
+    if (e && e.status === 404) return "GitHub cannot find that repository, or the token cannot see it. Check the repository name and that the token was made for this repository.";
+    if (e && (e.status === 409 || e.status === 422)) return "The listings changed on GitHub while you were editing. Sign out, sign in again and repeat your change.";
+    if (e && e.name === "TypeError") return "Could not reach GitHub. Check your internet connection and try again.";
+    return (e && e.message) || "Something went wrong. Try again.";
+  }
+  function toB64(str) { var b = new TextEncoder().encode(str), s = ""; for (var i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
+  function fromB64(b64) { var bin = atob(b64.replace(/\s/g, "")), a = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return new TextDecoder().decode(a); }
+  function parseStore(text) {
+    var i = text.indexOf("window.STORE"); if (i < 0) throw new Error("store.js has an unexpected format.");
+    var j = text.indexOf("=", i), body = text.slice(j + 1).trim().replace(/;\s*$/, "");
+    var d = JSON.parse(body); if (!d || !d.site || !Array.isArray(d.products)) throw new Error("store.js has an unexpected format.");
+    return d;
+  }
+  function serialize(d) { return HEADER + "window.STORE = " + JSON.stringify(d, null, 2) + ";\n"; }
+
+  /* Sign in */
+  function showErr(id, msg) { var e = $(id); e.textContent = msg; e.hidden = !msg; }
+  $("l-repo").value = sessionStorage.getItem("ll-repo") || SITE.githubRepo || "";
+  $("l-branch").value = sessionStorage.getItem("ll-branch") || SITE.githubBranch || "main";
+  $("login-form").addEventListener("submit", function (e) {
+    e.preventDefault(); showErr("l-err", "");
+    var repo = $("l-repo").value.trim().replace(/^https?:\/\/github\.com\//i, "").replace(/\/+$/, ""), branch = $("l-branch").value.trim() || "main", token = $("l-token").value.trim();
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return showErr("l-err", "Enter the repository as owner/name, for example your-username/your-username.github.io.");
+    if (!token) return showErr("l-err", "Paste your GitHub access token.");
+    S.repo = repo; S.branch = branch; S.token = token;
+    var btn = $("l-go"); btn.disabled = true; btn.textContent = "Signing in...";
+    gh("/repos/" + repo).then(function (r) {
+      if (!r.permissions || !r.permissions.push) throw Object.assign(new Error("This token can read the repository but cannot change it. Give it Contents: Read and write."), { status: 0 });
+      return gh("/repos/" + repo + "/contents/store.js?ref=" + encodeURIComponent(branch));
+    }).then(function (f) {
+      S.sha = f.sha; S.data = parseStore(fromB64(f.content)); S.original = JSON.stringify(S.data);
+      try { sessionStorage.setItem("ll-token", token); sessionStorage.setItem("ll-repo", repo); sessionStorage.setItem("ll-branch", branch); } catch (x) {}
+      $("l-token").value = ""; enter();
+    }).catch(function (err) { S.token = ""; showErr("l-err", explain(err)); }).then(function () { btn.disabled = false; btn.textContent = "Sign in"; });
+  });
+
+  function enter() {
+    $("login").hidden = true; $("app").hidden = false; $("bar").hidden = false;
+    document.querySelector("h1").textContent = "Store manager";
+    renderSite(); renderRows(); status();
+  }
+  $("signout").addEventListener("click", function () {
+    if (dirty() && !confirmOnce("signout")) return;
+    try { sessionStorage.removeItem("ll-token"); } catch (x) {}
+    location.reload();
+  });
+  var armed = {};
+  function confirmOnce(k) { if (armed[k]) { armed[k] = false; return true; } armed[k] = true; $("msg").textContent = "You have unpublished changes. Choose again to discard them."; setTimeout(function () { armed[k] = false; status(); }, 5000); return false; }
+
+  /* Editing state */
+  function dirty() { return !!S.data && (JSON.stringify(S.data) !== S.original || Object.keys(S.pending).length > 0); }
+  function status(text, cls) {
+    $("msg").textContent = text || (dirty() ? "You have unpublished changes. Visitors will not see them until you publish." : "Signed in. No changes yet.");
+    $("publish").disabled = S.busy || !dirty();
+  }
+  function renderSite() { siteKeys.forEach(function (k) { $("s-" + k).value = S.data.site[k] || ""; }); }
+  siteKeys.forEach(function (k) { $("s-" + k).addEventListener("input", function (e) { S.data.site[k] = e.target.value.trim(); status(); }); });
   function slug(s) { return (String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "design") + "-" + Math.random().toString(36).slice(2, 6); }
 
-  function renderSite() { siteKeys.forEach(function (k) { $("s-" + k).value = data.site[k] || ""; }); }
-  siteKeys.forEach(function (k) { $("s-" + k).addEventListener("input", function (e) { data.site[k] = e.target.value.trim(); persist(); }); });
-
+  function thumb(p) {
+    if (p.image) return '<img class="photo" src="' + esc(S.previews[p.image] || p.image) + '" alt="">';
+    return L.artSvg(p.art);
+  }
   function renderRows() {
-    $("count").textContent = data.products.length + " listed";
-    $("rows").innerHTML = data.products.length ? data.products.map(function (p, i) {
-      var th = p.image ? '<img class="photo" src="' + esc(p.image) + '" alt="">' : L.artSvg(p.art);
-      return '<div class="row"><div class="th">' + th + '</div><div><div class="nm">' + esc(p.name) + '</div><div class="meta">' + esc(p.cat) + ' &middot; ' + L.money(p.price) + (p.buyUrl ? ' &middot; payment link set' : ' &middot; no payment link') + '</div></div>' +
-        '<div class="acts"><button class="btn ghost small" type="button" data-up="' + i + '"' + (i === 0 ? " disabled" : "") + ' aria-label="Move up">Up</button><button class="btn ghost small" type="button" data-edit="' + i + '">Edit</button><button class="btn danger small" type="button" data-del="' + i + '">Remove</button></div></div>';
+    var P = S.data.products;
+    $("count").textContent = P.length + " listed";
+    $("rows").innerHTML = P.length ? P.map(function (p, i) {
+      return '<div class="row"><div class="th">' + thumb(p) + '</div><div><div class="nm">' + esc(p.name) + '</div><div class="meta">' + esc(p.cat) + ' &middot; Personal ' + L.money(p.personalPrice) + ' &middot; Commercial ' + (p.commercialPrice === "" || p.commercialPrice == null ? "none" : L.money(p.commercialPrice)) + '</div></div>' +
+        '<div class="acts"><button class="btn ghost small" type="button" data-up="' + i + '"' + (i === 0 ? " disabled" : "") + '>Up</button><button class="btn ghost small" type="button" data-edit="' + i + '">Edit</button><button class="btn danger small" type="button" data-del="' + i + '">Remove</button></div></div>';
     }).join("") : '<p class="empty">No designs yet. Choose Add a design.</p>';
-    var cats = []; data.products.forEach(function (p) { if (p.cat && cats.indexOf(p.cat) === -1) cats.push(p.cat); });
+    var cats = []; P.forEach(function (p) { if (p.cat && cats.indexOf(p.cat) === -1) cats.push(p.cat); });
     $("cats").innerHTML = cats.map(function (c) { return '<option value="' + esc(c) + '">'; }).join("");
   }
 
+  function showPhoto() {
+    $("f-preview").innerHTML = S.draftImg ? '<img src="' + esc(S.draftPreview || S.draftImg) + '" alt="Photo preview">' : "";
+    $("f-photo-rm").hidden = !S.draftImg;
+  }
   function openForm(i) {
-    editing = i; var p = i == null ? null : data.products[i];
+    S.editing = i; var p = i == null ? null : S.data.products[i];
     $("h-form").textContent = p ? "Edit design" : "Add a design";
     keys.forEach(function (k) { $("f-" + k).value = p ? (p[k] == null ? "" : p[k]) : (k === "art" ? "organizer" : ""); });
-    if (!p) { $("f-layer").value = "0.20 mm"; $("f-nozzle").value = "0.4 mm"; $("f-formats").value = "STL + STEP"; }
-    $("err").hidden = true; $("form-panel").hidden = false; $("form-panel").scrollIntoView({ behavior: "smooth", block: "start" }); $("f-name").focus();
+    if (!p) { $("f-layer").value = "0.20 mm"; $("f-nozzle").value = "0.4 mm"; }
+    $("f-photo").value = ""; S.draftImg = p ? p.image || null : null; S.draftPreview = p && p.image ? (S.previews[p.image] || null) : null; showPhoto();
+    showErr("err", ""); $("form-panel").hidden = false; $("form-panel").scrollIntoView({ behavior: "smooth", block: "start" }); $("f-name").focus();
   }
-  function closeForm() { $("form-panel").hidden = true; editing = null; }
+  function closeForm() { $("form-panel").hidden = true; S.editing = null; }
 
   $("rows").addEventListener("click", function (e) {
     var b = e.target.closest("button"); if (!b) return;
     if (b.dataset.edit != null) openForm(Number(b.dataset.edit));
-    else if (b.dataset.up != null) { var i = Number(b.dataset.up); if (i > 0) { var t = data.products[i]; data.products[i] = data.products[i - 1]; data.products[i - 1] = t; persist(); renderRows(); } }
+    else if (b.dataset.up != null) { var i = Number(b.dataset.up), P = S.data.products; if (i > 0) { var t = P[i]; P[i] = P[i - 1]; P[i - 1] = t; renderRows(); status(); } }
     else if (b.dataset.del != null) {
-      if (b.dataset.armed) { data.products.splice(Number(b.dataset.del), 1); persist(); renderRows(); }
+      if (b.dataset.armed) { S.data.products.splice(Number(b.dataset.del), 1); renderRows(); status(); }
       else { b.dataset.armed = "1"; b.textContent = "Click again to remove"; }
     }
   });
   $("add").addEventListener("click", function () { openForm(null); });
   $("cancel").addEventListener("click", closeForm);
+
+  function resize(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file), im = new Image();
+      im.onload = function () {
+        var s = Math.min(1, 1000 / Math.max(im.width, im.height)), c = document.createElement("canvas");
+        c.width = Math.max(1, Math.round(im.width * s)); c.height = Math.max(1, Math.round(im.height * s));
+        var x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url); resolve(c.toDataURL("image/jpeg", 0.82));
+      };
+      im.onerror = function () { URL.revokeObjectURL(url); reject(new Error("unreadable")); };
+      im.src = url;
+    });
+  }
+  $("f-photo").addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    resize(f).then(function (dataUrl) {
+      var name = "photo-" + Date.now().toString(36) + ".jpg";
+      S.pending[name] = dataUrl.split(",")[1]; S.previews[name] = dataUrl; S.draftImg = name; S.draftPreview = dataUrl; showPhoto(); showErr("err", "");
+    }, function () { showErr("err", "That file could not be read as an image."); });
+  });
+  $("f-photo-rm").addEventListener("click", function () { S.draftImg = null; S.draftPreview = null; $("f-photo").value = ""; showPhoto(); });
+
   $("form").addEventListener("submit", function (e) {
     e.preventDefault();
     var v = {}; keys.forEach(function (k) { v[k] = $("f-" + k).value.trim(); });
-    var err = $("err");
-    if (!v.name) { err.textContent = "Enter a name for the design."; err.hidden = false; return; }
-    if (v.price === "" || isNaN(Number(v.price)) || Number(v.price) < 0) { err.textContent = "Enter a price of 0 or more."; err.hidden = false; return; }
-    if (v.buyUrl && !/^https?:\/\//i.test(v.buyUrl)) { err.textContent = "The payment link must start with https://"; err.hidden = false; return; }
-    var item = { id: editing == null ? slug(v.name) : data.products[editing].id, name: v.name, cat: v.cat || "General", price: Math.round(Number(v.price) * 100) / 100, art: v.art, image: v.image, buyUrl: v.buyUrl,
-      blurb: v.blurb, formats: v.formats, mins: Math.max(0, Math.round(Number(v.mins) || 0)), grams: Math.max(0, Math.round(Number(v.grams) || 0)), layer: v.layer, nozzle: v.nozzle, supports: v.supports, infill: v.infill, material: v.material, fit: v.fit };
-    if (editing == null) data.products.unshift(item); else data.products[editing] = item;
-    closeForm(); persist(); renderRows();
+    if (!v.name) return showErr("err", "Enter a name for the design.");
+    if (v.personalPrice === "" || isNaN(Number(v.personalPrice)) || Number(v.personalPrice) < 0) return showErr("err", "Enter a Personal price of 0 or more.");
+    if (v.commercialPrice === "" || isNaN(Number(v.commercialPrice)) || Number(v.commercialPrice) < 0) return showErr("err", "Enter a Commercial price of 0 or more.");
+    if ((v.personalUrl && !/^https:\/\//i.test(v.personalUrl)) || (v.commercialUrl && !/^https:\/\//i.test(v.commercialUrl))) return showErr("err", "Payment links must start with https://");
+    var old = S.editing == null ? null : S.data.products[S.editing];
+    var item = { id: old ? old.id : slug(v.name), name: v.name, cat: v.cat || "General", personalPrice: Math.round(Number(v.personalPrice) * 100) / 100, personalUrl: v.personalUrl, commercialPrice: Math.round(Number(v.commercialPrice) * 100) / 100, commercialUrl: v.commercialUrl,
+      art: v.art, image: S.draftImg || "", blurb: v.blurb, mins: Math.max(0, Math.round(Number(v.mins) || 0)), grams: Math.max(0, Math.round(Number(v.grams) || 0)), layer: v.layer, nozzle: v.nozzle, supports: v.supports, infill: v.infill, material: v.material, fit: v.fit };
+    if (old) S.data.products[S.editing] = item; else S.data.products.unshift(item);
+    closeForm(); renderRows(); status();
   });
 
-  $("reset").addEventListener("click", function () { data = JSON.parse(original); try { localStorage.removeItem(DRAFT); } catch (e) {} closeForm(); renderSite(); renderRows(); persist(); });
-  $("download").addEventListener("click", function () {
-    var head = "/* Layerline store data. Replace this file on your host. Edit it with admin.html. */\n";
-    var blob = new Blob([head + "window.STORE = " + JSON.stringify(data, null, 2) + ";\n"], { type: "text/javascript" });
-    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "store.js"; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
-    $("msg").textContent = "Downloaded store.js. Replace the file on your host with it.";
+  /* Publish: save new photos, then store.js, straight to the repository */
+  $("publish").addEventListener("click", function () {
+    if (S.busy || !dirty()) return;
+    S.busy = true; status("Publishing...");
+    var used = {}; S.data.products.forEach(function (p) { if (p.image) used[p.image] = 1; });
+    var names = Object.keys(S.pending).filter(function (n) { return used[n]; });
+    var chain = Promise.resolve();
+    names.forEach(function (n) {
+      chain = chain.then(function () { return gh("/repos/" + S.repo + "/contents/" + encodeURIComponent(n), { method: "PUT", body: { message: "Add photo " + n, content: S.pending[n], branch: S.branch } }); });
+    });
+    chain.then(function () {
+      return gh("/repos/" + S.repo + "/contents/store.js", { method: "PUT", body: { message: "Update listings", content: toB64(serialize(S.data)), sha: S.sha, branch: S.branch } });
+    }).then(function (r) {
+      S.sha = r.content && r.content.sha ? r.content.sha : S.sha; S.original = JSON.stringify(S.data); S.pending = {};
+      S.busy = false; status("Published. The live site updates in about a minute or two.");
+    }).catch(function (err) { S.busy = false; status(explain(err)); });
   });
 
-  renderSite(); renderRows(); persist();
+  window.addEventListener("beforeunload", function (e) { if (dirty()) { e.preventDefault(); e.returnValue = ""; } });
+
+  /* Stay signed in across a page refresh in this tab */
+  (function () {
+    var t = null; try { t = sessionStorage.getItem("ll-token"); } catch (x) {}
+    if (!t) return;
+    $("l-token").value = t; $("login-form").dispatchEvent(new Event("submit", { cancelable: true }));
+  })();
 })();
 </script>
 </body>
