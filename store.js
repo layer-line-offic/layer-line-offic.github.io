@@ -14,7 +14,7 @@ window.STORE = {
     "tagline": "STL files for FDM 3D printing",
     "email": "layerline@yahoo.com",
     "domain": "https://www.example.com",
-    "instagram": "",
+    "instagram": "https://www.instagram.com/layer._.line?vrfl=MTNhMmozMGxkcGtxbQ==",
     "youtube": "",
     "locale": "en-US",
     "currency": "USD",
